@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: nuxt-nest-demo-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todoapp
+    volumes:
+      - data:/var/lib/postgresql
+    ports:
+      - "5440:5432"
+
+volumes:
+  data:
+    driver: local
