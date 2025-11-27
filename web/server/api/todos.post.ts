@@ -1,24 +1,18 @@
-import type { paths } from "../../backend-types/api.d.ts";
-
-type Todo =
-  paths["/todos"]["post"]["responses"]["201"]["content"]["application/json"];
+import type { paths } from '../../backend-types/api.d';
+import type { Todo } from '../../types/Todo';
 
 export type TodoRequest =
-  paths["/todos"]["post"]["requestBody"]["content"]["application/json"];
+  paths['/todos']['post']['requestBody']['content']['application/json'];
 
 export default defineEventHandler(async (event) => {
-  const cookies = parseCookies(event);
-  const token = cookies.token;
-  if (!token) {
-    await sendRedirect(event, "/login");
-  }
+  const token = getCookie(event, 'token');
 
   const body = await readBody(event);
 
-  if (!body.title || !body.description || !body.completed) {
+  if (!body.title || !body.description) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Missing required fields",
+      statusMessage: 'Missing required fields',
     });
   }
 
@@ -30,7 +24,7 @@ export default defineEventHandler(async (event) => {
 
   const ApiUrl = process.env.VITE_PUBLIC_API_URL;
   const res = await $fetch<Todo>(`${ApiUrl}/todos`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
     },

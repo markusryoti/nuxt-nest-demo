@@ -303,6 +303,15 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description The created record */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Todo"];
+                };
+            };
             /** @description Unauthorized */
             401: {
                 headers: {

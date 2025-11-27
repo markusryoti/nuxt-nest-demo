@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -77,6 +79,12 @@ export class TodosController {
 
   @Protected()
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'The created record',
+    type: Todo,
+  })
   async delete(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
     await this.todosService.deleteTodo(id, userId);

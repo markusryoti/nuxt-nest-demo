@@ -1,51 +1,70 @@
-<script lang="ts" setup>
-const title = ref("");
-const description = ref("");
-const completed = ref(false);
+<script setup lang="ts">
+import * as z from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
 
 const emit = defineEmits<{
   (
-    e: "submit",
-    payload: { title: string; description: string; completed: boolean },
+    e: 'submit',
+    payload: { title: string; description: string; completed: boolean }
   ): void;
 }>();
 
-function handleSubmit() {
-  emit("submit", {
-    title: title.value,
-    description: description.value,
-    completed: completed.value,
+const schema = z.object({
+  title: z.string('Title is required'),
+  description: z.string('Description is required'),
+  completed: z.boolean(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Partial<Schema>>({
+  title: undefined,
+  description: undefined,
+  completed: false,
+});
+
+const toast = useToast();
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  toast.add({
+    title: 'Success',
+    description: 'The form has been submitted.',
+    color: 'success',
   });
+
+  emit('submit', {
+    title: event.data.title,
+    description: event.data.description,
+    completed: event.data.completed,
+  });
+
+  state.title = '';
+  state.description = '';
+  state.completed = false;
 }
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit">
-    <div>
-      <label for="title">Title</label>
-      <input v-model="title" type="text" name="title" id="title" />
-    </div>
-    <div>
-      <label for="description">Description</label>
-      <input
-        v-model="description"
-        type="text"
-        name="description"
-        id="description"
-      />
-    </div>
-    <div>
-      <label for="completed">Completed</label>
-      <input
-        v-model="completed"
-        type="checkbox"
-        name="completed"
-        id="completed"
-        title="Completed"
-      />
-    </div>
-    <div>
-      <button type="submit">Submit</button>
-    </div>
-  </form>
+  <UCard variant="soft" class="max-w-2xl">
+    <template #header>
+      <h2 class="text-lg font-bold">Add Todo</h2>
+    </template>
+
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+      <UFormField label="Title" name="title">
+        <UInput v-model="state.title" class="w-xl" />
+      </UFormField>
+
+      <UFormField label="Description" name="description">
+        <!-- <UInput v-model="state.description" class="w-xl" />  -->
+        <UTextarea v-model="state.description" class="w-xl" />
+      </UFormField>
+
+      <div>
+        <UCheckbox v-model="state.completed" label="Completed" />
+      </div>
+
+      <UButton type="submit">Submit</UButton>
+    </UForm>
+  </UCard>
 </template>

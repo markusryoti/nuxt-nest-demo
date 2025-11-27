@@ -1,14 +1,10 @@
-import type { paths } from "../../backend-types/api.d.ts";
+import type { paths } from '../../backend-types/api.d.ts';
 
 type Todos =
-  paths["/todos"]["get"]["responses"]["200"]["content"]["application/json"];
+  paths['/todos']['get']['responses']['200']['content']['application/json'];
 
 export default defineEventHandler(async (event) => {
-  const cookies = parseCookies(event);
-  const token = cookies.token;
-  if (!token) {
-    await sendRedirect(event, "/login");
-  }
+  const token = getCookie(event, 'token');
 
   const ApiUrl = process.env.VITE_PUBLIC_API_URL;
   const res = await $fetch<Todos>(`${ApiUrl}/todos`, {

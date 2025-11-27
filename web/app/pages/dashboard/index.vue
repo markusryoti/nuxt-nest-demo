@@ -1,31 +1,56 @@
 <script setup lang="ts">
-const { data: todos, refresh } = await useFetch("/api/todos");
+definePageMeta({
+  middleware: 'auth',
+});
+
+const { data: todos, refresh } = await useFetch('/api/todos');
 
 async function handleSubmit(todo: {
   title: string;
   description: string;
   completed: boolean;
 }) {
-  const res = await $fetch("/api/todos", {
-    method: "POST",
+  await $fetch('/api/todos', {
+    method: 'POST',
     body: todo,
   });
 
-  console.log(res);
+  refresh();
+}
+
+async function handleTodoDelete(id: string) {
+  await $fetch(`/api/todos/${id}`, {
+    method: 'DELETE',
+  });
+
+  refresh();
+}
+
+async function handleTodoToggle(id: string) {
+  const todo = todos.value?.find((t) => t.id === id);
+  if (!todo) return;
+
+  await $fetch(`/api/todos/${id}`, {
+    method: 'PATCH',
+    body: { ...todo, completed: !todo.completed },
+  });
 
   refresh();
 }
 </script>
 
 <template>
-  <div>
-    <h1 class="text-2xl font-bold text-red-500">Todo Dashboard</h1>
-    <TodoForm @submit="handleSubmit" />
-    <ul v-if="todos">
-      <li v-for="todo in todos" :key="todo.id">
-        {{ todo.title }}
-      </li>
-    </ul>
+  <div class="flex flex-col gap-8 pt-8">
+    <div class="flex flex-col items-center gap-4">
+      <TodoForm @submit="handleSubmit" />
+    </div>
+    <hr />
+    <TodoList
+      v-if="todos"
+      :todos="todos"
+      @delete="handleTodoDelete"
+      @toggle="handleTodoToggle"
+    />
     <div v-else>No todos found.</div>
   </div>
 </template>
