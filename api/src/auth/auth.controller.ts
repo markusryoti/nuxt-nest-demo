@@ -7,13 +7,13 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { Public, Protected } from './auth.guard';
-import { type AuthenticatedRequest } from 'src/common/types';
-import { LoginDto } from './dto/login.dto';
 import { ApiResponse } from '@nestjs/swagger';
-import { TokenResponse } from './dto/token-response.dto';
 import { JwtClaims } from 'src/common/jwt-claims';
+import { type AuthenticatedRequest } from 'src/common/types';
+import { Protected, Public } from './auth.guard';
+import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
+import { TokenResponse } from './dto/token-response.dto';
 
 @Controller('auth')
 export class AuthController {

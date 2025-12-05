@@ -6,16 +6,16 @@ import {
   SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './auth.constants';
 import { FastifyRequest } from 'fastify';
-import { Reflector } from '@nestjs/core';
 import { JwtClaims } from 'src/common/jwt-claims';
+import { jwtConstants } from './auth.constants';
 
 export const APP_GUARD = 'APP_GUARD';
 

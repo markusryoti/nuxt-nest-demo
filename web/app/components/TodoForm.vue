@@ -56,13 +56,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       </UFormField>
 
       <UFormField label="Description" name="description">
-        <!-- <UInput v-model="state.description" class="w-xl" />  -->
         <UTextarea v-model="state.description" class="w-xl" />
       </UFormField>
 
-      <div>
+      <ClientOnly>
         <UCheckbox v-model="state.completed" label="Completed" />
-      </div>
+      </ClientOnly>
 
       <UButton type="submit">Submit</UButton>
     </UForm>
